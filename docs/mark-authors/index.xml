@@ -1,11 +1,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Codyze – Write MARK Policies</title>
-    <link>http://localhost:8080/docs/mark-authors/</link>
+    <link>https://www.codyze.io/docs/mark-authors/</link>
     <description>Recent content in Write MARK Policies on Codyze</description>
     <generator>Hugo -- gohugo.io</generator>
     
-	  <atom:link href="http://localhost:8080/docs/mark-authors/index.xml" rel="self" type="application/rss+xml" />
+	  <atom:link href="https://www.codyze.io/docs/mark-authors/index.xml" rel="self" type="application/rss+xml" />
     
     
       
@@ -15,10 +15,10 @@
     
     <item>
       <title>Docs: Install MARK IDE</title>
-      <link>http://localhost:8080/docs/mark-authors/installation/</link>
+      <link>https://www.codyze.io/docs/mark-authors/installation/</link>
       <pubDate>Tue, 10 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:8080/docs/mark-authors/installation/</guid>
+      <guid>https://www.codyze.io/docs/mark-authors/installation/</guid>
       <description>
         
         
@@ -26,7 +26,7 @@
 &lt;h2 id=&#34;install-the-mark-eclipse-plugin&#34;&gt;Install the MARK Eclipse Plugin&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;In Eclipse, click on &lt;code&gt;Help&lt;/code&gt;-&amp;gt;&lt;code&gt;Install new software&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Add the update site: &lt;code&gt;https://update.breakpoint-security.com&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Add the update site: &lt;code&gt;https://codyze.s3.eu-central-1.amazonaws.com/codyze-mark-eclipse-plugin/&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;Install (TODO: Name of product in eclipse update site)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;start-writing-mark-policies&#34;&gt;Start writing MARK policies&lt;/h2&gt;
@@ -41,10 +41,10 @@
     
     <item>
       <title>Docs: MARK Entities</title>
-      <link>http://localhost:8080/docs/mark-authors/define-entities/</link>
+      <link>https://www.codyze.io/docs/mark-authors/define-entities/</link>
       <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:8080/docs/mark-authors/define-entities/</guid>
+      <guid>https://www.codyze.io/docs/mark-authors/define-entities/</guid>
       <description>
         
         
@@ -170,10 +170,10 @@
     
     <item>
       <title>Docs: MARK Rules</title>
-      <link>http://localhost:8080/docs/mark-authors/mark-authors/</link>
+      <link>https://www.codyze.io/docs/mark-authors/mark-authors/</link>
       <pubDate>Wed, 05 Feb 2020 00:00:00 +0000</pubDate>
       
-      <guid>http://localhost:8080/docs/mark-authors/mark-authors/</guid>
+      <guid>https://www.codyze.io/docs/mark-authors/mark-authors/</guid>
       <description>
         
         
