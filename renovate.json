@@ -19,6 +19,12 @@
     {
       "groupName": "picocli packages",
       "packagePatterns": ["^info.picocli:"]
-    }
+    },
+    {
+      "groupName": "Groovy (no patch)",
+      "packagePatterns": ["^org.codehaus.groovy:groovy"],
+      "patch": {
+        "enabled": false
+      }
   ]
 }
