@@ -10,11 +10,9 @@ class JCATest extends AbstractMarkTest {
 
 	@Test
 	void testBCProviderCipher() throws Exception {
+		var conf = getDefaultConfiguration().additionalSourceFiles("java/jca/include/BouncyCastleProvider.java", "java/jca/include/BouncyCastleProvider.java");
 		Set<Finding> findings = performTest("java/jca/BCProviderCipher.java",
-			new String[] {
-					"java/jca/include/BouncyCastleProvider.java"
-			},
-			"mark/bouncycastle/");
+			"mark/bouncycastle/", conf);
 
 		// possible lines: 19,22,23,24,27,28
 		expected(findings,
@@ -93,11 +91,9 @@ class JCATest extends AbstractMarkTest {
 
 	@Test
 	void testAESGCM() throws Exception {
+		var conf = getDefaultConfiguration().additionalSourceFiles("java/jca/include/GCMParameterSpec.java");
 		Set<Finding> findings = performTest("java/jca/AESGCM.java",
-			new String[] {
-					"java/jca/include/GCMParameterSpec.java"
-			},
-			"mark/bouncycastle/");
+			"mark/bouncycastle/", conf);
 
 		expected(findings,
 			// rule bouncy castle as provider
@@ -173,12 +169,11 @@ class JCATest extends AbstractMarkTest {
 
 	@Test
 	void testAESCTR() throws Exception {
+		var conf = getDefaultConfiguration().additionalSourceFiles(
+			"java/jca/include/IvParameterSpec.java",
+			"java/jca/include/SecretKey.java");
 		Set<Finding> findings = performTest("java/jca/AESCTR.java",
-			new String[] {
-					"java/jca/include/IvParameterSpec.java",
-					"java/jca/include/SecretKey.java"
-			},
-			"mark/bouncycastle/");
+			"mark/bouncycastle/", conf);
 
 		expected(findings,
 			// rule bouncy castle as provider

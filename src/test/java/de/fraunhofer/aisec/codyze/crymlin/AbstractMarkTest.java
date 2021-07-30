@@ -1,13 +1,9 @@
 
 package de.fraunhofer.aisec.codyze.crymlin;
 
+import de.fraunhofer.aisec.codyze.analysis.*;
 import de.fraunhofer.aisec.codyze.analysis.passes.EdgeCachePass;
 import de.fraunhofer.aisec.codyze.analysis.passes.IdentifierPass;
-import de.fraunhofer.aisec.codyze.analysis.AnalysisServer;
-import de.fraunhofer.aisec.codyze.analysis.AnalysisContext;
-import de.fraunhofer.aisec.codyze.analysis.Finding;
-import de.fraunhofer.aisec.codyze.analysis.ServerConfiguration;
-import de.fraunhofer.aisec.codyze.analysis.TypestateMode;
 import de.fraunhofer.aisec.cpg.TranslationConfiguration;
 import de.fraunhofer.aisec.cpg.TranslationManager;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -26,22 +22,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class AbstractMarkTest {
 
-	protected TranslationManager translationManager;
-	protected AnalysisServer server;
 	protected AnalysisContext ctx;
-	protected TypestateMode tsMode = TypestateMode.NFA;
-
-	protected Set<Finding> performTest(String sourceFileName) throws Exception {
-		return performTest(sourceFileName, null);
-	}
 
 	@NonNull
 	protected Set<Finding> performTest(String sourceFileName, @Nullable String markFileName) throws Exception {
-		return performTest(sourceFileName, null, markFileName);
+		return performTest(sourceFileName, markFileName, getDefaultConfiguration());
 	}
 
 	@NonNull
-	protected Set<Finding> performTest(String sourceFileName, String[] additionalFiles, @Nullable String markFileName) throws Exception {
+	protected Set<Finding> performTest(String sourceFileName, @Nullable String markFileName, Configuration conf) throws Exception {
 		ClassLoader classLoader = AbstractMarkTest.class.getClassLoader();
 
 		URL resource = classLoader.getResource(sourceFileName);
@@ -52,14 +41,12 @@ public abstract class AbstractMarkTest {
 		ArrayList<File> toAnalyze = new ArrayList<>();
 		toAnalyze.add(javaFile);
 
-		if (additionalFiles != null) {
-			for (String s : additionalFiles) {
-				resource = classLoader.getResource(s);
-				assertNotNull(resource, "Resource " + s + " not found");
-				javaFile = new File(resource.getFile());
-				assertNotNull(javaFile, "File " + s + " not found");
-				toAnalyze.add(javaFile);
-			}
+		for (String s : conf.additionalFiles) {
+			resource = classLoader.getResource(s);
+			assertNotNull(resource, "Resource " + s + " not found");
+			javaFile = new File(resource.getFile());
+			assertNotNull(javaFile, "File " + s + " not found");
+			toAnalyze.add(javaFile);
 		}
 
 		String markDirPath = "";
@@ -79,32 +66,35 @@ public abstract class AbstractMarkTest {
 		}
 
 		// Start an analysis server
-		server = AnalysisServer.builder()
+		var server = AnalysisServer.builder()
 				.config(
 					ServerConfiguration.builder()
 							.launchConsole(false)
 							.launchLsp(false)
-							.typestateAnalysis(tsMode)
+							.typestateAnalysis(conf.tsMode)
 							.markFiles(markDirPath)
 							.useLegacyEvaluator()
 							.build())
 				.build();
 		server.start();
 
-		translationManager = TranslationManager.builder()
-				.config(
-					TranslationConfiguration.builder()
-							.debugParser(true)
-							.failOnError(false)
-							.codeInNodes(true)
-							.defaultPasses()
-							.defaultLanguages()
-							.registerPass(new IdentifierPass())
-							.registerPass(new EdgeCachePass())
-							.loadIncludes(true)
-							.sourceLocations(toAnalyze.toArray(new File[0]))
-							.build())
+		var translationConf = TranslationConfiguration.builder()
+				.debugParser(true)
+				.failOnError(false)
+				.codeInNodes(true)
+				.defaultPasses()
+				.defaultLanguages()
+				.registerPass(new IdentifierPass())
+				.registerPass(new EdgeCachePass())
+				.loadIncludes(conf.loadIncludes)
+				.sourceLocations(toAnalyze.toArray(new File[0]))
 				.build();
+		translationConf.includeBlacklist.addAll(conf.includeBlacklist);
+
+		var translationManager = TranslationManager.builder()
+				.config(translationConf)
+				.build();
+
 		CompletableFuture<AnalysisContext> analyze = server.analyze(translationManager);
 		try {
 			ctx = analyze.get(5, TimeUnit.MINUTES);
@@ -146,7 +136,8 @@ public abstract class AbstractMarkTest {
 
 	/**
 	 * Verifies that a set of findings contains at least the given expected findings.
-	 * @param findings A set of findings to check.
+	 *
+	 * @param findings         A set of findings to check.
 	 * @param expectedFindings A set of expected findings.
 	 */
 	protected void containsFindings(@NonNull Set<Finding> findings, String... expectedFindings) {
@@ -154,7 +145,7 @@ public abstract class AbstractMarkTest {
 		for (Finding f : findings)
 			System.out.println(f.toString());
 
-		Set<String> missingFindings = new HashSet<String>();
+		Set<String> missingFindings = new HashSet<>();
 		for (String expected : expectedFindings) {
 			boolean found = false;
 			for (Finding finding : findings) {
@@ -174,6 +165,37 @@ public abstract class AbstractMarkTest {
 			}
 		}
 		assertTrue(missingFindings.isEmpty());
+	}
+
+	protected Configuration getDefaultConfiguration() {
+		return new Configuration();
+	}
+
+	protected static class Configuration {
+		private boolean loadIncludes = false;
+		private TypestateMode tsMode = TypestateMode.NFA;
+		private final Set<String> includeBlacklist = new HashSet<>();
+		private final Set<String> additionalFiles = new HashSet<>();
+
+		protected Configuration loadIncludes(boolean load) {
+			this.loadIncludes = load;
+			return this;
+		}
+
+		protected Configuration setTSMode(TypestateMode tsMode) {
+			this.tsMode = tsMode;
+			return this;
+		}
+
+		protected Configuration blacklistedIncludes(@NonNull String... blacklist) {
+			Collections.addAll(this.includeBlacklist, blacklist);
+			return this;
+		}
+
+		protected Configuration additionalSourceFiles(@NonNull String... sourceFiles) {
+			Collections.addAll(this.additionalFiles, sourceFiles);
+			return this;
+		}
 	}
 
 }

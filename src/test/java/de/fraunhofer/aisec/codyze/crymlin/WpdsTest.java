@@ -25,9 +25,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class WpdsTest extends AbstractMarkTest {
 
+	private Configuration conf;
+
 	WpdsTest() {
 		// Using WPDS instead of NFA
-		tsMode = TypestateMode.WPDS;
+		conf = getDefaultConfiguration().setTSMode(TypestateMode.WPDS);
 	}
 
 	@Test
@@ -97,7 +99,7 @@ class WpdsTest extends AbstractMarkTest {
 	@Test
 	void testCppRegression88() throws Exception {
 		@NonNull
-		Set<Finding> findings = performTest("unittests/regression88.cpp", "../../src/dist/mark/botan");
+		Set<Finding> findings = performTest("unittests/regression88.cpp", "../../src/dist/mark/botan", conf);
 
 		// Note that line numbers of the "range" are the actual line numbers -1. This is required for proper LSP->editor mapping
 		assertEquals(7, findings.stream().filter(Finding::isProblem).count());
@@ -106,7 +108,7 @@ class WpdsTest extends AbstractMarkTest {
 	@Test
 	void testCppInterprocOk1() throws Exception {
 		@NonNull
-		Set<Finding> findings = performTest("unittests/orderInterprocOk1.cpp", "unittests/order2.mark");
+		Set<Finding> findings = performTest("unittests/orderInterprocOk1.cpp", "unittests/order2.mark", conf);
 
 		// Note that line numbers of the "range" are the actual line numbers -1. This is required for proper LSP->editor mapping
 		assertEquals(0, findings.stream().filter(Finding::isProblem).count());
@@ -115,7 +117,7 @@ class WpdsTest extends AbstractMarkTest {
 	@Test
 	void testCppInterprocOk1Legacy() throws Exception {
 		@NonNull
-		Set<Finding> findings = performTest("unittests/orderInterprocOk1.cpp", null, "unittests/order2.mark");
+		Set<Finding> findings = performTest("unittests/orderInterprocOk1.cpp", "unittests/order2.mark", conf);
 
 		// Note that line numbers of the "range" are the actual line numbers -1. This is required for proper LSP->editor mapping
 		assertEquals(0, findings.stream().filter(Finding::isProblem).count());
@@ -125,7 +127,7 @@ class WpdsTest extends AbstractMarkTest {
 	void testWpdsVector() throws Exception {
 
 		@NonNull
-		Set<Finding> findings = performTest("unittests/wpds-vector-example.java", "unittests/vector.mark");
+		Set<Finding> findings = performTest("unittests/wpds-vector-example.java", "unittests/vector.mark", conf);
 
 		// Extract <line nr, isProblem> from findings
 		Map<Integer, Boolean> startLineNumbers = findings.stream()
@@ -141,7 +143,7 @@ class WpdsTest extends AbstractMarkTest {
 	@Test
 	void testWpdsOK1() throws Exception {
 		@NonNull
-		Set<Finding> findings = performTest("unittests/wpds-ok1.cpp", "unittests/order2.mark");
+		Set<Finding> findings = performTest("unittests/wpds-ok1.cpp", "unittests/order2.mark", conf);
 
 		// Extract <line nr, isProblem> from findings
 		Map<Integer, Boolean> startLineNumbers = findings.stream()
@@ -171,7 +173,7 @@ class WpdsTest extends AbstractMarkTest {
 	@Test
 	void testWpdsOK2() throws Exception {
 		@NonNull
-		Set<Finding> findings = performTest("unittests/wpds-ok2.cpp", "unittests/order2.mark");
+		Set<Finding> findings = performTest("unittests/wpds-ok2.cpp", "unittests/order2.mark", conf);
 
 		// Extract <line nr, isProblem> from findings
 		Map<Integer, Boolean> startLineNumbers = findings.stream()
@@ -203,7 +205,7 @@ class WpdsTest extends AbstractMarkTest {
 	@Test
 	void testWpdsOk3() throws Exception {
 		@NonNull
-		Set<Finding> findings = performTest("unittests/wpds-ok3.cpp", "unittests/wpds-3.mark");
+		Set<Finding> findings = performTest("unittests/wpds-ok3.cpp", "unittests/wpds-3.mark", conf);
 
 		// Extract <line nr, isProblem> from findings
 		Map<Integer, Boolean> startLineNumbers = findings.stream()
@@ -228,7 +230,7 @@ class WpdsTest extends AbstractMarkTest {
 	//@Disabled // Disabled as if-branches are not yet correctly translated into WPDS rules
 	void testWpdsOk4() throws Exception {
 		@NonNull
-		Set<Finding> findings = performTest("unittests/wpds-ok4.cpp", "unittests/wpds-4.mark");
+		Set<Finding> findings = performTest("unittests/wpds-ok4.cpp", "unittests/wpds-4.mark", conf);
 
 		// Extract <line nr, isProblem> from findings
 		Map<Integer, Boolean> startLineNumbers = findings.stream()
@@ -254,7 +256,7 @@ class WpdsTest extends AbstractMarkTest {
 	@Test
 	void testWpdsNOK1() throws Exception {
 		@NonNull
-		Set<Finding> findings = performTest("unittests/wpds-nok1.cpp", "unittests/order2.mark");
+		Set<Finding> findings = performTest("unittests/wpds-nok1.cpp", "unittests/order2.mark", conf);
 
 		// Extract <line nr, isProblem> from findings
 		Map<Integer, Boolean> startLineNumbers = findings.stream()
@@ -278,7 +280,7 @@ class WpdsTest extends AbstractMarkTest {
 	@Test
 	void testCppInterprocNOk1() throws Exception {
 		@NonNull
-		Set<Finding> findings = performTest("unittests/orderInterprocNOk1.cpp", "unittests/order2.mark");
+		Set<Finding> findings = performTest("unittests/orderInterprocNOk1.cpp", "unittests/order2.mark", conf);
 
 		// Extract <line nr, isProblem> from findings
 		Map<Integer, Boolean> startLineNumbers = findings.stream()
@@ -302,7 +304,7 @@ class WpdsTest extends AbstractMarkTest {
 	@Test
 	void testCppInterprocNOk2() throws Exception {
 		@NonNull
-		Set<Finding> findings = performTest("unittests/orderInterprocNOk2.cpp", "unittests/order2.mark");
+		Set<Finding> findings = performTest("unittests/orderInterprocNOk2.cpp", "unittests/order2.mark", conf);
 
 		Map<Integer, Boolean> startLineNumbers = findings.stream()
 				.collect(Collectors.toMap(
@@ -321,7 +323,7 @@ class WpdsTest extends AbstractMarkTest {
 	@Test
 	void testJavaMethodArgs() throws Exception {
 		@NonNull
-		Set<Finding> findings = performTest("java/jca/AESCBC.java", "../../src/dist/mark/bouncycastle");
+		Set<Finding> findings = performTest("java/jca/AESCBC.java", "../../src/dist/mark/bouncycastle", conf);
 
 		Map<Integer, Boolean> startLineNumbers = findings.stream()
 				.collect(Collectors.toMap(
@@ -346,7 +348,7 @@ class WpdsTest extends AbstractMarkTest {
 	@Test
 	void testWpdsOpensslSimplified() throws Exception {
 		@NonNull
-		Set<Finding> findings = performTest("openssl/github.com/DaniloVlad/OpenSSL-AES/aes-simplified.c", "openssl/github.com/DaniloVlad/OpenSSL-AES/mark");
+		Set<Finding> findings = performTest("openssl/github.com/DaniloVlad/OpenSSL-AES/aes-simplified.c", "openssl/github.com/DaniloVlad/OpenSSL-AES/mark", conf);
 
 		// Extract <line nr, isProblem> from findings
 		Map<Integer, Boolean> startLineNumbers = findings.stream()

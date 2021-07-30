@@ -41,6 +41,7 @@ class ForbiddenTest extends AbstractMarkTest {
 
 	@Test
 	void testCpp() throws Exception {
-		performTest("unittests/forbidden.cpp");
+		var findings = performTest("unittests/forbidden.cpp", null);
+		findings.forEach(System.out::println);
 	}
 }
